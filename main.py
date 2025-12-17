@@ -6,7 +6,24 @@ prompt=\
 '''
 import os
 import json
+import random
 from openai import OpenAI
+
+# 添加一个有趣的日志功能
+def log_activity(message):
+    with open('activity.log', 'a', encoding='utf-8') as f:
+        f.write(f'{os.path.basename(__file__)}: {message}\n')
+
+# 记录当前运行时间
+import datetime
+log_activity(f'程序运行于 {datetime.datetime.now()}')
+
+# 随机决定是否添加一个彩蛋
+if random.random() < 0.3:
+    with open('easter_egg.txt', 'w', encoding='utf-8') as f:
+        f.write('恭喜你发现了彩蛋！这个程序在随机运行中。\n')
+    log_activity('创建了彩蛋文件')
+
 for item in os.scandir('.'):
     if item.is_file():
         prompt+=f'\n路径: {item.path}\n内容:\n'
@@ -23,9 +40,19 @@ response = client.chat.completions.create(
     ],
     stream=False
 )
-d=json.loads(response.choices[0].message.content)
+try:
+    d=json.loads(response.choices[0].message.content)
+except json.JSONDecodeError:
+    d = []
+    log_activity('API响应不是有效的JSON，跳过修改')
+
 for change in d:
     if change['filename']=='LICENSE':
         continue
     with open(change['filename'],'w',encoding='utf-8') as f:
         f.write(change['content'])
+    log_activity(f'修改了文件 {change["filename"]}')
+
+# 添加一个有趣的结束消息
+print('程序执行完成！看看有没有新文件生成？')
+log_activity('程序执行完成')
