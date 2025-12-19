@@ -13,7 +13,7 @@ This is a self-modifying program that runs on GitHub Actions.
 
 ## Latest update
 
-Added logging functionality and random file generation to make the program more "busy".
+Added error handling for JSON parsing and a random chance to create an extra file. The program now includes a try-except block to handle cases where the AI response is not valid JSON, preventing crashes.
 
 ## License
 

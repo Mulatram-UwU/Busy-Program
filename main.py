@@ -51,7 +51,11 @@ response = client.chat.completions.create(
     ],
     stream=False
 )
-d=json.loads(response.choices[0].message.content)
+try:
+    d=json.loads(response.choices[0].message.content)
+except json.JSONDecodeError:
+    d = []
+    log_message('Failed to parse JSON response, no changes made')
 for change in d:
     if change['filename']=='LICENSE':
         continue
@@ -60,3 +64,11 @@ for change in d:
 
 log_message('Busy Program finished')
 print('Busy Program execution completed. Check the log file for details.')
+
+# 新增一个随机操作：可能创建一个额外的文件
+if random.random() < 0.3:
+    extra_filename = f'extra_{timestamp}.txt'
+    with open(extra_filename, 'w', encoding='utf-8') as f:
+        f.write('This is an extra file created by the Busy Program.\n')
+        f.write(f'Random extra number: {random.randint(1000, 9999)}\n')
+    log_message(f'Created extra file: {extra_filename}')
