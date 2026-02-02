@@ -1,0 +1,37 @@
+name: Work!
+on:
+    workflow_dispatch:
+    schedule:
+      - cron: "0 16 * * *"
+jobs:
+    work:
+        name: Work!
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                    persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+                    fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+            - name: Setup Python environment
+              uses: actions/setup-python@v5
+              with:
+                    python-version: '3.9'
+                    architecture: 'x64'
+            - name: Install dependencies
+              run: pip install openai
+            - name: Modify 
+              env:
+                DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+              run: python main.py
+            - name: Submit Commit
+              run: |
+                  git config --local user.email "github-actions[bot]@users.noreply.github.com"
+                  git config --local user.name "github-actions[bot]"
+                  git add -A
+                  git commit -m "GitHub Actions: Work"
+                  echo "hasChange=true" >> $GITHUB_OUTPUT
+            - name: Push changes
+              uses: ad-m/github-push-action@master
+              with:
+                github_token: ${{ secrets.GITHUB_TOKEN }}
+                branch: ${{ github.ref }}
