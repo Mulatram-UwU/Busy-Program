@@ -5,6 +5,7 @@ prompt=\
 以下是各个文件的内容：
 '''
 import os
+import shutil
 import json
 import ast
 import py_compile
@@ -57,6 +58,8 @@ while not ok:
             else:
                 print(f"代码验证失败，跳过修改 {change['filename']}")
             os.remove('tmp.'+change['filename'])
+            if os.path.exists('__pycache__'):
+                shutil.rmtree('__pycache__')
         else:
             with open(change['filename'],'w',encoding='utf-8') as f:
                 f.write(change['content'])
