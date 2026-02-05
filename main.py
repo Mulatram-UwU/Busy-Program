@@ -47,13 +47,14 @@ while not ok:
                 print(f"编译错误: {e}")
                 is_valid = False
         
-        # 只有验证通过才写入原文件
-        if is_valid:
+            # 只有验证通过才写入原文件
+            if is_valid:
+                with open(change['filename'],'w',encoding='utf-8') as f:
+                    f.write(change['content'])
+                ok=True
+            else:
+                print(f"代码验证失败，跳过修改 {change['filename']}")
+            os.remove('tmp.'+change['filename'])
+        else:
             with open(change['filename'],'w',encoding='utf-8') as f:
                 f.write(change['content'])
-            ok=True
-        else:
-            print(f"代码验证失败，跳过修改 {change['filename']}")
-    else:
-        with open(change['filename'],'w',encoding='utf-8') as f:
-            f.write(change['content'])
