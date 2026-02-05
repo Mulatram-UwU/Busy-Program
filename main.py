@@ -9,6 +9,7 @@ from openai import OpenAI
 import random
 import datetime
 import time
+import math
 
 # 添加一个简单的日志函数
 log_file = 'program_log.txt'
@@ -133,3 +134,44 @@ for item in os.scandir('.'):
 
 with open('file_list.txt', 'w', encoding='utf-8') as f:
     f.write(file_list)
+
+# 新增：生成一个数学计算文件
+math_content = f'''数学计算文件
+生成时间: {datetime.datetime.now()}
+
+随机计算示例:
+1. 圆周率: {math.pi}
+2. 自然常数: {math.e}
+3. 随机数的平方根: {math.sqrt(random.randint(1, 100))}
+4. 正弦函数值: {math.sin(random.uniform(0, math.pi))}
+5. 对数计算: {math.log(random.randint(1, 100))}
+
+程序演化次数: {random.randint(10, 100)}
+'''
+
+with open('math_calc.txt', 'w', encoding='utf-8') as f:
+    f.write(math_content)
+
+# 新增：创建一个程序状态摘要文件
+summary_content = f'''Busy Program 状态摘要
+=====================
+
+最后运行时间: {datetime.datetime.now()}
+总运行时长: {runtime:.2f} 秒
+文件数量: {len([f for f in os.listdir('.') if os.path.isfile(f)])}
+
+当前功能:
+- 自我修改代码
+- 语法验证
+- 运行时间记录
+- 文件生成
+- ASCII艺术
+- 数学计算
+- 状态监控
+
+演化状态: 活跃中
+下次修改: 随机
+'''
+
+with open('program_summary.txt', 'w', encoding='utf-8') as f:
+    f.write(summary_content)

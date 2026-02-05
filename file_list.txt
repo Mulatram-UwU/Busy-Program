@@ -1,0 +1,12 @@
+当前目录文件列表:
+- ascii_art.txt
+- LICENSE
+- busy_log.txt
+- math_calc.txt
+- random_comment.txt
+- program_summary.txt
+- program_log.txt
+- fun_fact.txt
+- main.py
+- readme.txt
+- run_info.txt
