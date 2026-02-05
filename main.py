@@ -10,6 +10,19 @@ import json
 import ast
 import py_compile
 from openai import OpenAI
+import random
+import datetime
+
+# 添加一个简单的日志函数
+log_file = 'program_log.txt'
+
+def log_message(msg):
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    with open(log_file, 'a', encoding='utf-8') as f:
+        f.write(f'[{timestamp}] {msg}\n')
+
+log_message('程序开始运行')
+
 for item in os.scandir('.'):
     if item.is_file():
         prompt+=f'\n路径: {item.path}\n内容:\n'
@@ -29,6 +42,7 @@ while not ok:
         stream=False
     )
     d=json.loads(response.choices[0].message.content)
+    log_message(f'收到 {len(d)} 个修改操作')
     for change in d:
         if change['filename']=='LICENSE':
             # 许可证文件不允许修改 避免违反开源协议
@@ -45,9 +59,11 @@ while not ok:
                 py_compile.compile('tmp.'+change['filename'], doraise=True)
             except SyntaxError as e:
                 print(f"语法错误: {e}")
+                log_message(f'语法错误: {e}')
                 is_valid = False
             except py_compile.PyCompileError as e:
                 print(f"编译错误: {e}")
+                log_message(f'编译错误: {e}')
                 is_valid = False
         
             # 只有验证通过才写入原文件
@@ -55,11 +71,28 @@ while not ok:
                 with open(change['filename'],'w',encoding='utf-8') as f:
                     f.write(change['content'])
                 ok=True
+                log_message('main.py 修改成功')
             else:
                 print(f"代码验证失败，跳过修改 {change['filename']}")
+                log_message(f'代码验证失败，跳过修改 {change["filename"]}')
             os.remove('tmp.'+change['filename'])
             if os.path.exists('__pycache__'):
                 shutil.rmtree('__pycache__')
         else:
             with open(change['filename'],'w',encoding='utf-8') as f:
                 f.write(change['content'])
+            log_message(f'文件 {change["filename"]} 已修改')
+
+# 添加一个随机生成的注释文件
+random_comment = f'''# 随机生成的注释文件
+# 生成时间: {datetime.datetime.now()}
+# 随机数: {random.randint(1, 1000)}
+# 这是一个实验性修改，没有任何特定目标。
+# 程序将继续运行并自我修改。
+'''
+
+with open('random_comment.txt', 'w', encoding='utf-8') as f:
+    f.write(random_comment)
+
+log_message('程序运行结束')
+print('程序执行完成！')
