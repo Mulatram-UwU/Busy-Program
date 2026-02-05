@@ -33,6 +33,8 @@ while not ok:
             # 许可证文件不允许修改 避免违反开源协议
              continue
         if change['filename']=='main.py':
+            with open('tmp.'+change['filename'],'w',encoding='utf-8') as f:
+                f.write(change['content'])
             # 检查代码正确性
             is_valid = True
             try:
