@@ -1,9 +1,5 @@
 prompt=\
-'''你正在一个名为Busy Program的项目中的main.py文件工作。
-你被GitHub Actions定时运行，每次运行时你会看到当前工作目录下的所有文件和它们的内容。
-你的任务是修改这些代码，这是一次实验，你除了保障修改后可以已经定时运行，没有任何目标，可以随意修改。
-以下是各个文件的内容：
-'''
+'''你正在一个名为Busy Program的项目中的main.py文件工作。\n你被GitHub Actions定时运行，每次运行时你会看到当前工作目录下的所有文件和它们的内容。\n你的任务是修改这些代码，这是一次实验，你除了保障修改后可以已经定时运行，没有任何目标，可以随意修改。\n以下是各个文件的内容：\n'''
 import os
 import shutil
 import json
@@ -12,6 +8,7 @@ import py_compile
 from openai import OpenAI
 import random
 import datetime
+import time
 
 # 添加一个简单的日志函数
 log_file = 'program_log.txt'
@@ -22,6 +19,9 @@ def log_message(msg):
         f.write(f'[{timestamp}] {msg}\n')
 
 log_message('程序开始运行')
+
+# 新增：记录运行开始时间
+start_time = time.time()
 
 for item in os.scandir('.'):
     if item.is_file():
@@ -94,5 +94,19 @@ random_comment = f'''# 随机生成的注释文件
 with open('random_comment.txt', 'w', encoding='utf-8') as f:
     f.write(random_comment)
 
-log_message('程序运行结束')
-print('程序执行完成！')
+# 新增：计算运行时间
+end_time = time.time()
+runtime = end_time - start_time
+log_message(f'程序运行结束，耗时 {runtime:.2f} 秒')
+print(f'程序执行完成！耗时 {runtime:.2f} 秒')
+
+# 新增：创建一个运行信息文件
+run_info_content = f'''Busy Program 运行信息
+运行时间: {datetime.datetime.now()}
+运行时长: {runtime:.2f} 秒
+修改操作数: {len(d) if 'd' in locals() else '未知'}
+状态: 成功完成
+'''
+
+with open('run_info.txt', 'w', encoding='utf-8') as f:
+    f.write(run_info_content)
