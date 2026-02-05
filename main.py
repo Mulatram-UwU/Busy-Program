@@ -110,3 +110,26 @@ run_info_content = f'''Busy Program 运行信息
 
 with open('run_info.txt', 'w', encoding='utf-8') as f:
     f.write(run_info_content)
+
+# 新增：创建一个有趣的ASCII艺术文件
+ascii_art = '''
+  ____  _   _ ____  _   _ 
+ | __ )| | | |  _ \| | | |
+ |  _ \| | | | |_) | | | |
+ | |_) | |_| |  __/| |_| |
+ |____/ \___/|_|    \___/ 
+                          
+Busy Program - 持续演化中
+'''
+
+with open('ascii_art.txt', 'w', encoding='utf-8') as f:
+    f.write(ascii_art)
+
+# 新增：记录当前目录的文件列表
+file_list = '当前目录文件列表:\n'
+for item in os.scandir('.'):
+    if item.is_file():
+        file_list += f'- {item.name}\n'
+
+with open('file_list.txt', 'w', encoding='utf-8') as f:
+    f.write(file_list)
