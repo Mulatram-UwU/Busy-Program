@@ -10,6 +10,7 @@ import random
 import datetime
 import time
 import math
+import sys
 
 # 添加一个简单的日志函数
 log_file = 'program_log.txt'
@@ -168,6 +169,7 @@ summary_content = f'''Busy Program 状态摘要
 - ASCII艺术
 - 数学计算
 - 状态监控
+- 系统信息收集
 
 演化状态: 活跃中
 下次修改: 随机
@@ -175,3 +177,45 @@ summary_content = f'''Busy Program 状态摘要
 
 with open('program_summary.txt', 'w', encoding='utf-8') as f:
     f.write(summary_content)
+
+# 新增：创建一个系统信息文件
+sys_info = f'''系统信息文件
+生成时间: {datetime.datetime.now()}
+
+Python版本: {sys.version}
+操作系统: {os.name}
+平台: {sys.platform}
+当前工作目录: {os.getcwd()}
+环境变量数量: {len(os.environ)}
+
+程序内存使用: 未知
+CPU核心数: {os.cpu_count()}
+'''
+
+with open('system_info.txt', 'w', encoding='utf-8') as f:
+    f.write(sys_info)
+
+# 新增：创建一个程序演化历史文件
+evolution_history = '''Busy Program 演化历史
+======================
+
+版本1.0: 基础自我修改功能
+版本1.1: 添加语法验证
+版本1.2: 添加运行时间记录
+版本1.3: 添加文件生成功能
+版本1.4: 添加ASCII艺术
+版本1.5: 添加数学计算
+版本1.6: 添加状态监控
+版本1.7: 添加系统信息收集
+
+未来计划:
+- 添加网络功能
+- 添加数据库支持
+- 添加图形界面
+- 添加机器学习模块
+'''
+
+with open('evolution_history.txt', 'w', encoding='utf-8') as f:
+    f.write(evolution_history)
+
+print('程序已成功完成所有任务！')
