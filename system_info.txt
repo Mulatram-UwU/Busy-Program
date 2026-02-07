@@ -1,0 +1,12 @@
+系统信息文件
+生成时间: 2026-02-07 16:38:08.226895
+
+Python版本: 3.9.25 (main, Nov  3 2025, 15:16:36) 
+[GCC 13.3.0]
+操作系统: posix
+平台: linux
+当前工作目录: /home/runner/work/Busy-Program/Busy-Program
+环境变量数量: 118
+
+程序内存使用: 未知
+CPU核心数: 4

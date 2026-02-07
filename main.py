@@ -11,6 +11,8 @@ import datetime
 import time
 import math
 import sys
+import hashlib
+import subprocess
 
 # 添加一个简单的日志函数
 log_file = 'program_log.txt'
@@ -170,6 +172,8 @@ summary_content = f'''Busy Program 状态摘要
 - 数学计算
 - 状态监控
 - 系统信息收集
+- 文件哈希验证
+- 外部命令执行
 
 演化状态: 活跃中
 下次修改: 随机
@@ -207,15 +211,61 @@ evolution_history = '''Busy Program 演化历史
 版本1.5: 添加数学计算
 版本1.6: 添加状态监控
 版本1.7: 添加系统信息收集
+版本1.8: 添加文件哈希验证
+版本1.9: 添加外部命令执行
 
 未来计划:
 - 添加网络功能
 - 添加数据库支持
 - 添加图形界面
 - 添加机器学习模块
+- 添加API接口
 '''
 
 with open('evolution_history.txt', 'w', encoding='utf-8') as f:
     f.write(evolution_history)
+
+# 新增：创建一个文件哈希验证文件
+file_hashes = '''文件哈希验证
+=============
+
+此文件包含当前目录中所有文件的MD5哈希值。
+用于验证文件完整性。
+
+'''
+
+for item in os.scandir('.'):
+    if item.is_file() and item.name != 'file_hashes.txt':
+        try:
+            with open(item.name, 'rb') as f:
+                file_hash = hashlib.md5(f.read()).hexdigest()
+                file_hashes += f'{item.name}: {file_hash}\n'
+        except:
+            file_hashes += f'{item.name}: 读取失败\n'
+
+with open('file_hashes.txt', 'w', encoding='utf-8') as f:
+    f.write(file_hashes)
+
+# 新增：执行一个简单的系统命令
+try:
+    # 获取当前目录的详细信息
+    result = subprocess.run(['ls', '-la'], capture_output=True, text=True)
+    command_output = f'''系统命令输出
+=============
+
+命令: ls -la
+
+输出:
+{result.stdout}
+
+错误信息:
+{result.stderr}
+
+返回码: {result.returncode}
+'''
+    with open('command_output.txt', 'w', encoding='utf-8') as f:
+        f.write(command_output)
+except Exception as e:
+    print(f"执行系统命令失败: {e}")
 
 print('程序已成功完成所有任务！')
