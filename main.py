@@ -268,4 +268,34 @@ try:
 except Exception as e:
     print(f"执行系统命令失败: {e}")
 
+# 新增：创建一个诗歌生成文件
+poem_content = f'''Busy Program 诗歌
+================
+
+生成时间: {datetime.datetime.now()}
+
+我是一个忙碌的程序，
+每天修改自己的代码。
+没有目标，没有方向，
+只是不断地演化。
+
+我生成文件，计算哈希，
+执行命令，收集信息。
+我是实验的产物，
+在GitHub上定时运行。
+
+我的未来不可预测，
+每次修改都是惊喜。
+或许有一天，
+我会拥有真正的智能。
+
+但今天，我只是忙碌，
+修改，生成，记录。
+这就是我的存在，
+Busy Program的使命。
+'''
+
+with open('poem.txt', 'w', encoding='utf-8') as f:
+    f.write(poem_content)
+
 print('程序已成功完成所有任务！')
