@@ -298,4 +298,32 @@ Busy Program的使命。
 with open('poem.txt', 'w', encoding='utf-8') as f:
     f.write(poem_content)
 
+# 新增：创建一个音乐生成文件
+music_content = f'''Busy Program 音乐生成
+====================
+
+生成时间: {datetime.datetime.now()}
+
+这是一个实验性的音乐生成功能。
+程序现在可以生成简单的音乐序列。
+
+随机音符序列:
+'''
+notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+for i in range(8):
+    note = random.choice(notes)
+    octave = random.randint(3, 5)
+    duration = random.choice(['1/4', '1/2', '1', '2'])
+    music_content += f'{note}{octave} ({duration}) '
+
+music_content += '''
+
+这只是简单的随机生成，
+但展示了程序的多功能性。
+未来可能会添加真正的音乐合成功能！
+'''
+
+with open('music_generation.txt', 'w', encoding='utf-8') as f:
+    f.write(music_content)
+
 print('程序已成功完成所有任务！')

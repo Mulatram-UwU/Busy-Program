@@ -4,27 +4,29 @@
 命令: ls -la
 
 输出:
-total 120
-drwxr-xr-x 4 runner runner  4096 Feb  8 16:38 .
-drwxr-xr-x 3 runner runner  4096 Feb  8 16:36 ..
-drwxr-xr-x 7 runner runner  4096 Feb  8 16:36 .git
-drwxr-xr-x 3 runner runner  4096 Feb  8 16:36 .github
--rw-r--r-- 1 runner runner 35149 Feb  8 16:36 LICENSE
--rw-r--r-- 1 runner runner   194 Feb  8 16:38 ascii_art.txt
--rw-r--r-- 1 runner runner  1013 Feb  8 16:38 busy_log.txt
--rw-r--r-- 1 runner runner   511 Feb  8 16:38 evolution_history.txt
--rw-r--r-- 1 runner runner   847 Feb  8 16:38 file_hashes.txt
--rw-r--r-- 1 runner runner   266 Feb  8 16:38 file_list.txt
--rw-r--r-- 1 runner runner   774 Feb  8 16:38 fun_fact.txt
--rw-r--r-- 1 runner runner  9472 Feb  8 16:38 main.py
--rw-r--r-- 1 runner runner   290 Feb  8 16:38 math_calc.txt
--rw-r--r-- 1 runner runner   533 Feb  8 16:38 poem.txt
--rw-r--r-- 1 runner runner  2337 Feb  8 16:38 program_log.txt
--rw-r--r-- 1 runner runner   381 Feb  8 16:38 program_summary.txt
--rw-r--r-- 1 runner runner   192 Feb  8 16:38 random_comment.txt
--rw-r--r-- 1 runner runner  1395 Feb  8 16:38 readme.txt
--rw-r--r-- 1 runner runner   132 Feb  8 16:38 run_info.txt
--rw-r--r-- 1 runner runner   292 Feb  8 16:38 system_info.txt
+total 128
+drwxr-xr-x 4 runner runner  4096 Feb 15 16:37 .
+drwxr-xr-x 3 runner runner  4096 Feb 15 16:36 ..
+drwxr-xr-x 7 runner runner  4096 Feb 15 16:36 .git
+drwxr-xr-x 3 runner runner  4096 Feb 15 16:36 .github
+-rw-r--r-- 1 runner runner 35149 Feb 15 16:36 LICENSE
+-rw-r--r-- 1 runner runner   194 Feb 15 16:37 ascii_art.txt
+-rw-r--r-- 1 runner runner  1013 Feb 15 16:36 busy_log.txt
+-rw-r--r-- 1 runner runner  1263 Feb 15 16:36 command_output.txt
+-rw-r--r-- 1 runner runner   511 Feb 15 16:37 evolution_history.txt
+-rw-r--r-- 1 runner runner   955 Feb 15 16:37 file_hashes.txt
+-rw-r--r-- 1 runner runner   328 Feb 15 16:37 file_list.txt
+-rw-r--r-- 1 runner runner   812 Feb 15 16:37 fun_fact.txt
+-rw-r--r-- 1 runner runner 10223 Feb 15 16:37 main.py
+-rw-r--r-- 1 runner runner   290 Feb 15 16:37 math_calc.txt
+-rw-r--r-- 1 runner runner   397 Feb 15 16:37 music_generation.txt
+-rw-r--r-- 1 runner runner   533 Feb 15 16:36 poem.txt
+-rw-r--r-- 1 runner runner  2751 Feb 15 16:37 program_log.txt
+-rw-r--r-- 1 runner runner   380 Feb 15 16:37 program_summary.txt
+-rw-r--r-- 1 runner runner   192 Feb 15 16:37 random_comment.txt
+-rw-r--r-- 1 runner runner  1465 Feb 15 16:37 readme.txt
+-rw-r--r-- 1 runner runner   131 Feb 15 16:37 run_info.txt
+-rw-r--r-- 1 runner runner   292 Feb 15 16:37 system_info.txt
 
 
 错误信息:
