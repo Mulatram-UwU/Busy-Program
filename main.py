@@ -326,4 +326,34 @@ music_content += '''
 with open('music_generation.txt', 'w', encoding='utf-8') as f:
     f.write(music_content)
 
+# 新增：创建一个图形生成文件
+graphics_content = f'''Busy Program 图形生成
+====================
+
+生成时间: {datetime.datetime.now()}
+
+这是一个实验性的图形生成功能。
+程序现在可以生成简单的ASCII图形。
+
+随机ASCII图形:
+'''
+shapes = ['*', '#', '@', '%', '&', '+', '=']
+for i in range(10):
+    for j in range(20):
+        if random.random() > 0.7:
+            graphics_content += random.choice(shapes)
+        else:
+            graphics_content += ' '
+    graphics_content += '\n'
+
+graphics_content += '''
+
+这只是简单的随机图形生成，
+但展示了程序的创造性。
+未来可能会添加更复杂的图形生成功能！
+'''
+
+with open('graphics_generation.txt', 'w', encoding='utf-8') as f:
+    f.write(graphics_content)
+
 print('程序已成功完成所有任务！')

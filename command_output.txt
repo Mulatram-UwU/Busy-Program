@@ -5,28 +5,28 @@
 
 输出:
 total 128
-drwxr-xr-x 4 runner runner  4096 Feb 15 16:37 .
-drwxr-xr-x 3 runner runner  4096 Feb 15 16:36 ..
-drwxr-xr-x 7 runner runner  4096 Feb 15 16:36 .git
-drwxr-xr-x 3 runner runner  4096 Feb 15 16:36 .github
--rw-r--r-- 1 runner runner 35149 Feb 15 16:36 LICENSE
--rw-r--r-- 1 runner runner   194 Feb 15 16:37 ascii_art.txt
--rw-r--r-- 1 runner runner  1013 Feb 15 16:36 busy_log.txt
--rw-r--r-- 1 runner runner  1263 Feb 15 16:36 command_output.txt
--rw-r--r-- 1 runner runner   511 Feb 15 16:37 evolution_history.txt
--rw-r--r-- 1 runner runner   955 Feb 15 16:37 file_hashes.txt
--rw-r--r-- 1 runner runner   328 Feb 15 16:37 file_list.txt
--rw-r--r-- 1 runner runner   812 Feb 15 16:37 fun_fact.txt
--rw-r--r-- 1 runner runner 10223 Feb 15 16:37 main.py
--rw-r--r-- 1 runner runner   290 Feb 15 16:37 math_calc.txt
--rw-r--r-- 1 runner runner   397 Feb 15 16:37 music_generation.txt
--rw-r--r-- 1 runner runner   533 Feb 15 16:36 poem.txt
--rw-r--r-- 1 runner runner  2751 Feb 15 16:37 program_log.txt
--rw-r--r-- 1 runner runner   380 Feb 15 16:37 program_summary.txt
--rw-r--r-- 1 runner runner   192 Feb 15 16:37 random_comment.txt
--rw-r--r-- 1 runner runner  1465 Feb 15 16:37 readme.txt
--rw-r--r-- 1 runner runner   131 Feb 15 16:37 run_info.txt
--rw-r--r-- 1 runner runner   292 Feb 15 16:37 system_info.txt
+drwxr-xr-x 4 runner runner  4096 Feb 16 16:53 .
+drwxr-xr-x 3 runner runner  4096 Feb 16 16:52 ..
+drwxr-xr-x 7 runner runner  4096 Feb 16 16:52 .git
+drwxr-xr-x 3 runner runner  4096 Feb 16 16:52 .github
+-rw-r--r-- 1 runner runner 35149 Feb 16 16:52 LICENSE
+-rw-r--r-- 1 runner runner   194 Feb 16 16:53 ascii_art.txt
+-rw-r--r-- 1 runner runner  1013 Feb 16 16:52 busy_log.txt
+-rw-r--r-- 1 runner runner  1395 Feb 16 16:52 command_output.txt
+-rw-r--r-- 1 runner runner   511 Feb 16 16:53 evolution_history.txt
+-rw-r--r-- 1 runner runner   955 Feb 16 16:53 file_hashes.txt
+-rw-r--r-- 1 runner runner   328 Feb 16 16:53 file_list.txt
+-rw-r--r-- 1 runner runner   840 Feb 16 16:53 fun_fact.txt
+-rw-r--r-- 1 runner runner 11008 Feb 16 16:53 main.py
+-rw-r--r-- 1 runner runner   290 Feb 16 16:53 math_calc.txt
+-rw-r--r-- 1 runner runner   397 Feb 16 16:52 music_generation.txt
+-rw-r--r-- 1 runner runner   534 Feb 16 16:52 poem.txt
+-rw-r--r-- 1 runner runner  3105 Feb 16 16:53 program_log.txt
+-rw-r--r-- 1 runner runner   380 Feb 16 16:53 program_summary.txt
+-rw-r--r-- 1 runner runner   192 Feb 16 16:53 random_comment.txt
+-rw-r--r-- 1 runner runner  1531 Feb 16 16:53 readme.txt
+-rw-r--r-- 1 runner runner   131 Feb 16 16:53 run_info.txt
+-rw-r--r-- 1 runner runner   292 Feb 16 16:53 system_info.txt
 
 
 错误信息:
