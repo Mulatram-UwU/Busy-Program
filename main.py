@@ -11,12 +11,16 @@ import ast
 import py_compile
 from openai import OpenAI
 def main():
+    prompt='''你正在一个名为Busy Program的项目中的main.py文件工作。
+你被GitHub Actions定时运行，每次运行时你会看到当前工作目录下的所有文件和它们的内容。
+你的任务是修改这些代码，这是一次实验，你除了保障修改后可以已经定时运行，你的目标是自己编写一个语言模型，你试验觉得成熟后代替这个API的方案，可以随意修改。
+以下是各个文件的内容：'''# 还是加点目标吧，不然AI会胡乱改
     for item in os.scandir('.'):
         if item.is_file():
             prompt+=f'\n路径: {item.path}\n内容:\n'
             with open(item.path,'r',encoding='utf-8') as f:
                 prompt+=f.read()+'\n'
-    prompt+='\n你需要输出以下格式的修改：\n你的输出必须是一个JSON列表，列表中的每一项是一个代表一次操作的字典，程序会按照列表中的顺序执行操作，包含以下字段：\n"filename" 此字段的值应为要修改的文件名\n"content" 此字段的值应为修改后的完整文件内容\n注意！新建文件也被认为是修改，只不过是修改了一个不存在的文件名！\n如果你不想修改任何文件，请输出一个空的JSON列表：[]\n注意！请你直接输出平文本形式的json，无需```json和```来括起来\n请开始你的修改：'
+    prompt+='\n你需要输出以下格式的修改：\n你的输出必须是一个JSON列表，列表中的每一项是一个代表一次操作的字典，程序会按照列表中的顺序执行操作，包含以下字段：\n"filename" 此字段的值应为要修改的文件名\n"content" 此字段的值应为修改后的完整文件内容\n注意！新建文件也被认为是修改，只不过是修改了一个不存在的文件名！\n如果你不想修改任何文件，请输出一个空的JSON列表：[]\n注意！请你直接输出平文本形式的json，无需```json和```来括起来，并且包含\\n之类的可以，不需要改成\\\\n的形式\n请开始你的修改：'
     ok=False
     while not ok:
         client = OpenAI(
