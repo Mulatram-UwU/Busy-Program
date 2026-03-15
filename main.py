@@ -21,20 +21,28 @@ def main():
             prompt+=f'\n路径: {item.path}\n内容:\n'
             with open(item.path,'r',encoding='utf-8') as f:
                 prompt+=f.read()+'\n'
-    prompt+='\n你需要输出以下格式的修改：\n你的输出必须是一个JSON列表，列表中的每一项是一个代表一次操作的字典，程序会按照列表中的顺序执行操作，第一种字典包含以下字段：\n"filename" 此字段的值应为要修改的文件名\n"content" 此字段的值应为修改后的完整文件内容\n注意！新建文件也被认为是修改，只不过是修改了一个不存在的文件名！\n第二种字典包含以下字段：\n"command" 此字段的值应为要运行的命令行命令，你可以用它安装库等等\n如果你不想进行任何操作，请输出一个空的JSON列表：[]\n注意！请你直接输出平文本形式的json，无需```json和```来括起来，并且包含\\n之类的可以，不需要改成\\\\n的形式\n请开始你的修改：'
+    prompt+='\n你需要输出以下格式的修改：\n你的输出必须是一个JSON列表，列表中的每一项是一个代表一次操作的字典，程序会按照列表中的顺序执行操作，第一种字典包含以下字段：\n"filename" 此字段的值应为要修改的文件名\n"content" 此字段的值应为修改后的完整文件内容\n注意！新建文件也被认为是修改，只不过是修改了一个不存在的文件名！\n第二种字典包含以下字段：\n"command" 此字段的值应为要运行的命令行命令，你可以用它安装库等等\n如果你不想进行任何操作，请输出一个空的JSON列表：[]\n注意！请你直接输出平文本形式的json，无需```json和```来括起来，并且包含\n之类的可以，不需要改成\\\\n的形式\n请开始你的修改：'
     ok=False
     while not ok:
-        client = OpenAI(
-        api_key=os.environ.get('DEEPSEEK_API_KEY'),
-        base_url="https://api.deepseek.com")
-        response = client.chat.completions.create(
-            model="deepseek-reasoner",
-            messages=[
-                {"role": "user", "content": prompt},
-            ],
-            stream=False
-        )
-        d=json.loads(response.choices[0].message.content)
+        try:
+            from local_model import LocalModel
+            local_model = LocalModel()
+            response = local_model.generate(prompt)
+            d=json.loads(response)
+        except Exception as e:
+            print(f"Local model failed: {e}")
+            # 回退到API
+            client = OpenAI(
+            api_key=os.environ.get('DEEPSEEK_API_KEY'),
+            base_url="https://api.deepseek.com")
+            response = client.chat.completions.create(
+                model="deepseek-reasoner",
+                messages=[
+                    {"role": "user", "content": prompt},
+                ],
+                stream=False
+            )
+            d=json.loads(response.choices[0].message.content)
         print(d) # debug
         for change in d:
             if 'command' in change:
@@ -59,7 +67,7 @@ def main():
                 except py_compile.PyCompileError as e:
                     print(f"编译错误: {e}")
                     is_valid = False
-            
+
                 # 只有验证通过才写入原文件
                 if is_valid:
                     with open(change['filename'],'w',encoding='utf-8') as f:
