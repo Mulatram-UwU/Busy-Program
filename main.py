@@ -12,6 +12,7 @@ import ast
 import py_compile
 from openai import OpenAI
 def main():
+    print("Local model generated this line")
     prompt='''你正在一个名为Busy Program的项目中的main.py文件工作。
 你被GitHub Actions定时运行，每次运行时你会看到当前工作目录下的所有文件和它们的内容。
 你的任务是修改这些代码，这是一次实验，你除了保障修改后可以已经定时运行，你的目标是自己编写一个语言模型，你试验觉得成熟后代替这个API的方案，可以随意修改。注意！试验成熟后，你也不想本地模型瞎输出导致项目崩溃吧。
@@ -90,3 +91,4 @@ if __name__ == "__main__":
             print(f"执行过程中发生错误: {e}")
         else:
             ok=True
+
