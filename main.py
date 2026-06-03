@@ -34,7 +34,6 @@ def local_model_call(prompt):
     # 设置生成参数
     response = _generator(
         prompt,
-        max_length=len(prompt) + 500,  # 限制总长度
         num_return_sequences=1,
         temperature=0.7,
         do_sample=True,
