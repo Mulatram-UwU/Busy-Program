@@ -17,8 +17,9 @@ jobs:
               with:
                     python-version: '3.9'
                     architecture: 'x64'
+                    cache: 'pip'
             - name: Install dependencies
-              run: pip install transformers torch
+              run: pip install -r requirements.txt
             - name: Modify 
               env:
                 DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
