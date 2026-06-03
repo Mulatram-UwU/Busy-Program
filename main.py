@@ -39,6 +39,8 @@ def local_model_call(prompt):
         do_sample=True,
         pad_token_id=_tokenizer.eos_token_id  # 设置填充令牌
     )
+    if not response or len(response) == 0:
+        raise IndexError("模型返回了空结果列表")
     generated_text = response[0]['generated_text']
     # 提取新生成的部分（移除提示）
     if generated_text.startswith(prompt):
@@ -59,19 +61,28 @@ def main():
                 prompt += f.read() + '\n'
     prompt += '\n你需要输出以下格式的修改：\n你的输出必须是一个JSON列表，列表中的每一项是一个代表一次操作的字典，程序会按照列表中的顺序执行操作，第一种字典包含以下字段：\n"filename" 此字段的值应为要修改的文件名\n"content" 此字段的值应为修改后的完整文件内容\n注意！新建文件也被认为是修改，只不过是修改了一个不存在的文件名！\n第二种字典包含以下字段：\n"command" 此字段的值应为要运行的命令行命令，你可以用它安装库等等\n如果你不想进行任何操作，请输出一个空的JSON列表：[]\n注意！请你直接输出平文本形式的json，无需```json和```来括起来，并且包含\\n之类的可以，不需要改成\\\\n的形式\n请开始你的修改：'
 
+    import time
+    max_retries = 3
+    retry_count = 0
     ok = False
-    while not ok:
+    while not ok and retry_count < max_retries:
+        retry_count += 1
         try:
             json_text = local_model_call(prompt)
             d = json.loads(json_text)
         except json.JSONDecodeError as e:
-            print(f"本地模型生成的JSON解析错误: {e}")
+            print(f"本地模型生成的JSON解析错误 (尝试 {retry_count}/{max_retries}): {e}")
             print(f"生成文本: {json_text}")
-            # 尝试修复或重试，这里简单设置为空列表
             d = []
+            time.sleep(2)
         except Exception as e:
-            print(f"调用本地模型时发生错误: {e}")
+            print(f"调用本地模型时发生错误 (尝试 {retry_count}/{max_retries}): {e}")
             d = []
+            time.sleep(5)
+        
+        if not ok and retry_count >= max_retries:
+            print(f"模型调用失败，已重试 {max_retries} 次，退出")
+            return
         
         print(d)  # debug
         for change in d:
@@ -110,11 +121,18 @@ def main():
                     f.write(change['content'])
 
 if __name__ == "__main__":
+    import time
+    max_attempts = 5
+    attempts = 0
     ok = False
-    while not ok:
+    while not ok and attempts < max_attempts:
+        attempts += 1
         try:
             main()
         except Exception as e:
-            print(f"执行过程中发生错误: {e}")
+            print(f"执行过程中发生错误 (尝试 {attempts}/{max_attempts}): {e}")
+            time.sleep(10)
         else:
             ok = True
+    if not ok:
+        print(f"执行失败，已达最大尝试次数 {max_attempts}")
