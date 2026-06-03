@@ -18,7 +18,7 @@ jobs:
                     python-version: '3.9'
                     architecture: 'x64'
             - name: Install dependencies
-              run: pip install openai
+              run: pip install transformers torch
             - name: Modify 
               env:
                 DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
