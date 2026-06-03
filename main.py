@@ -62,6 +62,21 @@ def main():
     prompt += '\n你需要输出以下格式的修改：\n你的输出必须是一个JSON列表，列表中的每一项是一个代表一次操作的字典，程序会按照列表中的顺序执行操作，第一种字典包含以下字段：\n"filename" 此字段的值应为要修改的文件名\n"content" 此字段的值应为修改后的完整文件内容\n注意！新建文件也被认为是修改，只不过是修改了一个不存在的文件名！\n第二种字典包含以下字段：\n"command" 此字段的值应为要运行的命令行命令，你可以用它安装库等等\n如果你不想进行任何操作，请输出一个空的JSON列表：[]\n注意！请你直接输出平文本形式的json，无需```json和```来括起来，并且包含\\n之类的可以，不需要改成\\\\n的形式\n请开始你的修改：'
 
     import time
+    if _tokenizer is None:
+        load_local_model()
+    MODEL_MAX_TOKENS = _model.config.max_position_embeddings
+    MAX_NEW_TOKENS = 256
+    token_count = len(_tokenizer.encode(prompt))
+    max_input_tokens = MODEL_MAX_TOKENS - MAX_NEW_TOKENS
+    if token_count > max_input_tokens:
+        print(
+            f"Prompt token count ({token_count}) exceeds model input limit "
+            f"({max_input_tokens} tokens, {MODEL_MAX_TOKENS} context - "
+            f"{MAX_NEW_TOKENS} generation budget). Aborting."
+        )
+        return
+    print(f"Prompt tokens: {token_count} (limit: {max_input_tokens})")
+
     max_retries = 3
     retry_count = 0
     ok = False
