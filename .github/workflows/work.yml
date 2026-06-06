@@ -17,8 +17,9 @@ jobs:
               with:
                     python-version: '3.9'
                     architecture: 'x64'
+                    cache: 'pip'
             - name: Install dependencies
-              run: pip install openai
+              run: pip install -r requirements.txt
             - name: Modify 
               env:
                 DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
@@ -28,8 +29,13 @@ jobs:
                   git config --local user.email "github-actions[bot]@users.noreply.github.com"
                   git config --local user.name "github-actions[bot]"
                   git add -A
-                  git commit -m "GitHub Actions: Work"
-                  echo "hasChange=true" >> $GITHUB_OUTPUT
+                  if git diff --cached --quiet; then
+                    echo "hasChange=false" >> $GITHUB_OUTPUT
+                    echo "No changes to commit"
+                  else
+                    git commit -m "GitHub Actions: Work"
+                    echo "hasChange=true" >> $GITHUB_OUTPUT
+                  fi
             - name: Push changes
               uses: ad-m/github-push-action@master
               with:
