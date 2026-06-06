@@ -3,61 +3,15 @@ import shutil
 import json
 import ast
 import py_compile
-# 导入本地模型相关
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
-
-# 全局变量用于缓存模型
-_model = None
-_tokenizer = None
-_generator = None
-
-def load_local_model():
-    """加载本地语言模型"""
-    global _model, _tokenizer, _generator
-    if _generator is not None:
-        return
-    model_name = "distilgpt2"  # 使用DistilGPT-2，一个小型模型
-    try:
-        _tokenizer = AutoTokenizer.from_pretrained(model_name)
-        _model = AutoModelForCausalLM.from_pretrained(model_name)
-        _generator = pipeline('text-generation', model=_model, tokenizer=_tokenizer)
-    except Exception as e:
-        print(f"加载本地模型失败: {e}")
-        raise
-
-def local_model_call(prompt):
-    """调用本地模型生成响应"""
-    global _generator
-    if _generator is None:
-        load_local_model()
-    
-    # 设置生成参数
-    response = _generator(
-        prompt,
-        num_return_sequences=1,
-        temperature=0.7,
-        do_sample=True,
-        pad_token_id=_tokenizer.eos_token_id  # 设置填充令牌
-    )
-    if not response or len(response) == 0:
-        raise IndexError("模型返回了空结果列表")
-    generated_text = response[0]['generated_text']
-    # 提取新生成的部分（移除提示）
-    if generated_text.startswith(prompt):
-        json_text = generated_text[len(prompt):].strip()
-    else:
-        json_text = generated_text.strip()  # 如果模型没有重复提示，则使用全部
-    return json_text
-
+from openai import OpenAI
 def main():
     prompt = (
         "You are working in the main.py file of a project called Busy Program.\n"
         "You are run on a schedule by GitHub Actions. Each run you see all files "
         "in the working directory and their contents.\n"
         "Your task is to modify the code. This is an experiment—besides ensuring "
-        "the modified code can still run on schedule, your goal is to write your "
-        "own language model implementation to eventually replace this API-based "
-        "approach. Modify freely, but do not break the project.\n"
+        "the modified code can still run on schedule, and you have no goal "
+        "Modify freely, but do not break the project.\n"
         "Below are the contents of all files:\n"
     )
     for item in os.scandir('.'):
@@ -79,38 +33,34 @@ def main():
         "Output raw JSON only — no markdown fences, just plain text JSON.\n"
         "Begin your changes:\n"
     )
-
-    import time
-    if _tokenizer is None:
-        load_local_model()
-    MODEL_MAX_TOKENS = _model.config.max_position_embeddings
-    MAX_NEW_TOKENS = 256
-    token_count = len(_tokenizer.encode(prompt))
-    max_input_tokens = MODEL_MAX_TOKENS - MAX_NEW_TOKENS
-    if token_count > max_input_tokens:
-        print(
-            f"Prompt token count ({token_count}) exceeds model input limit "
-            f"({max_input_tokens} tokens, {MODEL_MAX_TOKENS} context - "
-            f"{MAX_NEW_TOKENS} generation budget). Aborting."
-        )
-        return
-    print(f"Prompt tokens: {token_count} (limit: {max_input_tokens})")
-
     max_retries = 3
     retry_count = 0
     ok = False
+    client = OpenAI(
+        api_key=os.environ.get('DEEPSEEK_API_KEY'),
+        base_url="https://api.deepseek.com"
+    )
     while not ok and retry_count < max_retries:
         retry_count += 1
+        response = client.chat.completions.create(
+                model="deepseek-v4-pro",
+                messages=[
+                    {"role": "user", "content": prompt},
+                ],
+                reasoning_effort="high",
+                extra_body={"thinking": {"type": "enabled"}},
+                stream=False
+            )
+        )
         try:
-            json_text = local_model_call(prompt)
-            d = json.loads(json_text)
+            d=json.loads(response.choices[0].message.content)
         except json.JSONDecodeError as e:
-            print(f"本地模型生成的JSON解析错误 (尝试 {retry_count}/{max_retries}): {e}")
+            print(f"模型生成的JSON解析错误 (尝试 {retry_count}/{max_retries}): {e}")
             print(f"生成文本: {json_text}")
             d = []
             time.sleep(2)
         except Exception as e:
-            print(f"调用本地模型时发生错误 (尝试 {retry_count}/{max_retries}): {e}")
+            print(f"调用模型时发生错误 (尝试 {retry_count}/{max_retries}): {e}")
             d = []
             time.sleep(5)
         
@@ -151,6 +101,7 @@ def main():
                 if os.path.exists('__pycache__'):
                     shutil.rmtree('__pycache__')
             else:
+                os.makedirs(os.path.split(change['filename'])[0], exist_ok=True)
                 with open(change['filename'], 'w', encoding='utf-8') as f:
                     f.write(change['content'])
 
