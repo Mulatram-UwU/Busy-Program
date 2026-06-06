@@ -118,6 +118,7 @@ def main():
     with open(run_count_file, 'w') as f:
         f.write(str(run_count))
     print(f"Busy Program run #{run_count}")
+    print('Making changes is fun!')
 
     client = OpenAI(
         api_key=os.environ.get('DEEPSEEK_API_KEY'),
