@@ -43,14 +43,13 @@ def main():
     while not ok and retry_count < max_retries:
         retry_count += 1
         response = client.chat.completions.create(
-                model="deepseek-v4-pro",
-                messages=[
-                    {"role": "user", "content": prompt},
-                ],
-                reasoning_effort="high",
-                extra_body={"thinking": {"type": "enabled"}},
-                stream=False
-            )
+            model="deepseek-v4-pro",
+            messages=[
+                {"role": "user", "content": prompt},
+            ],
+            reasoning_effort="high",
+            extra_body={"thinking": {"type": "enabled"}},
+            stream=False
         )
         try:
             d=json.loads(response.choices[0].message.content)
