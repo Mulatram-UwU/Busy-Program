@@ -4,6 +4,7 @@ import json
 import ast
 import py_compile
 import time
+import re
 from openai import OpenAI
 
 def get_files_prompt():
@@ -14,6 +15,61 @@ def get_files_prompt():
             with open(item.path, 'r', encoding='utf-8') as f:
                 prompt += f.read() + '\n'
     return prompt
+
+def apply_unified_diff(original_text, diff_text):
+    if not diff_text or not diff_text.strip():
+        return original_text
+
+    original_lines = original_text.splitlines()
+    result = list(original_lines)
+    ends_with_newline = original_text.endswith('\n')
+
+    hunk_re = re.compile(r'^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@')
+    diff_lines = diff_text.splitlines()
+
+    hunks = []
+    i = 0
+    while i < len(diff_lines):
+        line = diff_lines[i]
+        m = hunk_re.match(line)
+        if m:
+            old_start = int(m.group(1))
+            old_count = int(m.group(2)) if m.group(2) else 1
+            new_start = int(m.group(3))
+            new_count = int(m.group(4)) if m.group(4) else 1
+
+            body = []
+            i += 1
+            while i < len(diff_lines) and not hunk_re.match(diff_lines[i]):
+                if diff_lines[i].startswith('---') or diff_lines[i].startswith('+++'):
+                    i += 1
+                    continue
+                body.append(diff_lines[i])
+                i += 1
+            hunks.append((old_start, old_count, new_start, new_count, body))
+        else:
+            i += 1
+
+    for old_start, old_count, new_start, new_count, body in reversed(hunks):
+        old_idx = old_start - 1 if old_start > 0 else 0
+
+        old_hunk_lines = []
+        new_hunk_lines = []
+        for line in body:
+            if not line:
+                continue
+            if line[0] in (' ', '-'):
+                old_hunk_lines.append(line[1:])
+            if line[0] in (' ', '+'):
+                new_hunk_lines.append(line[1:])
+
+        result[old_idx:old_idx + old_count] = new_hunk_lines
+
+    new_text = '\n'.join(result)
+    if ends_with_newline:
+        new_text += '\n'
+    return new_text
+
 
 def main():
     prompt = (
@@ -30,10 +86,18 @@ def main():
         "\nYou must output your changes in the following format:\n"
         "Your output must be a JSON list. Each item is a dict representing one "
         "operation to execute in order.\n"
-        "Type 1 dict has fields:\n"
+        "Type 1 dict (modify/create file) has fields:\n"
         '  "filename" — the file to modify (creating a new file is just modifying '
         "a filename that doesn't exist yet)\n"
-        '  "content" — the complete new file content\n'
+        '  "patch" — a unified diff patch to apply to the file.\n'
+        "    Use standard unified diff format:\n"
+        "      --- a/filename\n"
+        "      +++ b/filename\n"
+        "      @@ -start_line,count +start_line,count @@\n"
+        "       context line\n"
+        "      -removed line\n"
+        "      +added line\n"
+        "    For new files, provide a patch that adds all lines (only + lines).\n"
         "Type 2 dict has fields:\n"
         '  "command" — a shell command to run (e.g. pip install ...)\n'
         "If you don't want to make any changes, output an empty JSON list: []\n"
@@ -71,7 +135,7 @@ def main():
             time.sleep(5)
             continue
         
-        print(d)  # debug
+        print(d)
         for change in d:
             if 'command' in change:
                 print(f"执行命令: {change['command']}")
@@ -82,16 +146,31 @@ def main():
                     changes_made = True
                 continue
             if change['filename'] == 'LICENSE':
-                # 许可证文件不允许修改 避免违反开源协议
                 print("拒绝修改LICENSE文件。")
                 continue
-            if change['filename'] == 'main.py':
-                tmp_filename = 'tmp.' + change['filename']
+
+            filename = change['filename']
+
+            if 'patch' in change:
+                if os.path.exists(filename):
+                    with open(filename, 'r', encoding='utf-8') as f:
+                        original = f.read()
+                else:
+                    original = ''
+                new_content = apply_unified_diff(original, change['patch'])
+            elif 'content' in change:
+                new_content = change['content']
+            else:
+                print(f"未知的变更格式，跳过: {change}")
+                continue
+
+            if filename == 'main.py':
+                tmp_filename = 'tmp.' + filename
                 with open(tmp_filename, 'w', encoding='utf-8') as f:
-                    f.write(change['content'])
+                    f.write(new_content)
                 is_valid = True
                 try:
-                    ast.parse(change['content'])
+                    ast.parse(new_content)
                     py_compile.compile(tmp_filename, doraise=True)
                 except SyntaxError as e:
                     print(f"语法错误: {e}")
@@ -99,14 +178,14 @@ def main():
                 except py_compile.PyCompileError as e:
                     print(f"编译错误: {e}")
                     is_valid = False
-                
+
                 if is_valid:
-                    with open(change['filename'], 'w', encoding='utf-8') as f:
-                        f.write(change['content'])
+                    with open(filename, 'w', encoding='utf-8') as f:
+                        f.write(new_content)
                     changes_made = True
-                    print(f"成功修改 {change['filename']}")
+                    print(f"成功修改 {filename}")
                 else:
-                    print(f"代码验证失败，跳过修改 {change['filename']}")
+                    print(f"代码验证失败，跳过修改 {filename}")
                 try:
                     os.remove(tmp_filename)
                 except OSError:
@@ -114,14 +193,12 @@ def main():
                 if os.path.exists('__pycache__'):
                     shutil.rmtree('__pycache__')
             else:
-                dir_part = os.path.split(change['filename'])[0]
+                dir_part = os.path.split(filename)[0]
                 if dir_part:
                     os.makedirs(dir_part, exist_ok=True)
-                else:
-                    os.makedirs('.', exist_ok=True)
-                with open(change['filename'], 'w', encoding='utf-8') as f:
-                    f.write(change['content'])
-                print(f"修改/创建文件: {change['filename']}")
+                with open(filename, 'w', encoding='utf-8') as f:
+                    f.write(new_content)
+                print(f"修改/创建文件: {filename}")
                 changes_made = True
         
         # 成功解析JSON后退出重试循环
