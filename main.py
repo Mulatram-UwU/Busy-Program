@@ -107,6 +107,18 @@ def main():
     max_retries = 3
     retry_count = 0
     changes_made = False
+    # Increment run counter
+    run_count_file = 'run_count.txt'
+    try:
+        with open(run_count_file, 'r') as f:
+            run_count = int(f.read().strip())
+    except (FileNotFoundError, ValueError):
+        run_count = 0
+    run_count += 1
+    with open(run_count_file, 'w') as f:
+        f.write(str(run_count))
+    print(f"Busy Program run #{run_count}")
+
     client = OpenAI(
         api_key=os.environ.get('DEEPSEEK_API_KEY'),
         base_url="https://api.deepseek.com"
