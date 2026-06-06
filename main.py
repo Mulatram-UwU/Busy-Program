@@ -3,7 +3,9 @@ import shutil
 import json
 import ast
 import py_compile
+import time
 from openai import OpenAI
+
 def main():
     prompt = (
         "You are working in the main.py file of a project called Busy Program.\n"
@@ -52,20 +54,17 @@ def main():
             stream=False
         )
         try:
-            d=json.loads(response.choices[0].message.content)
+            raw = response.choices[0].message.content
+            d = json.loads(raw)
         except json.JSONDecodeError as e:
             print(f"模型生成的JSON解析错误 (尝试 {retry_count}/{max_retries}): {e}")
-            print(f"生成文本: {json_text}")
+            print(f"生成文本: {raw}")
             d = []
             time.sleep(2)
         except Exception as e:
             print(f"调用模型时发生错误 (尝试 {retry_count}/{max_retries}): {e}")
             d = []
             time.sleep(5)
-        
-        if not ok and retry_count >= max_retries:
-            print(f"模型调用失败，已重试 {max_retries} 次，退出")
-            return
         
         print(d)  # debug
         for change in d:
@@ -105,7 +104,6 @@ def main():
                     f.write(change['content'])
 
 if __name__ == "__main__":
-    import time
     max_attempts = 5
     attempts = 0
     ok = False
