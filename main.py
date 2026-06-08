@@ -4,6 +4,8 @@ import json
 import ast
 import py_compile
 import time
+import datetime
+import random
 import re
 from openai import OpenAI
 
@@ -119,6 +121,15 @@ def main():
         f.write(str(run_count))
     print(f"Busy Program run #{run_count}")
     print('Making changes is fun!')
+    print(f"Time: {datetime.datetime.now(datetime.timezone.utc).isoformat()}")
+    quotes = [
+        "Stay busy!",
+        "Busy is the new happy.",
+        "Idle hands are the devil's workshop.",
+        "Keep calm and stay busy.",
+        "Busy bees make the sweetest honey.",
+    ]
+    print(random.choice(quotes))
 
     client = OpenAI(
         api_key=os.environ.get('DEEPSEEK_API_KEY'),
