@@ -122,13 +122,18 @@ def main():
     print(f"Busy Program run #{run_count}")
     print('Making changes is fun!')
     print(f"Time: {datetime.datetime.now(datetime.timezone.utc).isoformat()}")
+    log_line = f"Run #{run_count} at {datetime.datetime.now(datetime.timezone.utc).isoformat()}"
+    with open('busy.log', 'a') as logf:
+        logf.write(log_line + '\n')
     quotes = [
         "Stay busy!",
         "Busy is the new happy.",
         "Idle hands are the devil's workshop.",
         "Keep calm and stay busy.",
         "Busy bees make the sweetest honey.",
+        "A busy life is a happy life.",
     ]
+    print(random.choice(quotes))
     print(random.choice(quotes))
 
     client = OpenAI(
