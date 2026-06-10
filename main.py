@@ -132,8 +132,9 @@ def main():
         "Keep calm and stay busy.",
         "Busy bees make the sweetest honey.",
         "A busy life is a happy life.",
+        "Embrace the hustle.",
+        "No pain, no gain.",
     ]
-    print(random.choice(quotes))
     print(random.choice(quotes))
 
     client = OpenAI(
