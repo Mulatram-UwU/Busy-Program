@@ -7,6 +7,7 @@ import time
 import datetime
 import random
 import re
+import sys
 from openai import OpenAI
 
 def get_files_prompt():
@@ -125,6 +126,7 @@ def main():
     log_line = f"Run #{run_count} at {datetime.datetime.now(datetime.timezone.utc).isoformat()}"
     with open('busy.log', 'a') as logf:
         logf.write(log_line + '\n')
+    print(f"Python version: {sys.version}")
     quotes = [
         "Stay busy!",
         "Busy is the new happy.",
