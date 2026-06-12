@@ -136,6 +136,7 @@ def main():
         "A busy life is a happy life.",
         "Embrace the hustle.",
         "No pain, no gain.",
+        "Busy: because doing nothing is not an option.",
     ]
     print(random.choice(quotes))
 
