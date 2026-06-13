@@ -10,6 +10,13 @@ import re
 import sys
 from openai import OpenAI
 
+def busy_wait(seconds=3):
+    print("Working...", end='', flush=True)
+    for _ in range(seconds):
+        time.sleep(1)
+        print('.', end='', flush=True)
+    print()
+
 def get_files_prompt():
     prompt = "Below are the contents of all files:\n"
     for item in os.scandir('.'):
@@ -121,6 +128,7 @@ def main():
     with open(run_count_file, 'w') as f:
         f.write(str(run_count))
     print(f"Busy Program run #{run_count}")
+    busy_wait(3)
     print('Making changes is fun!')
     print(f"Time: {datetime.datetime.now(datetime.timezone.utc).isoformat()}")
     log_line = f"Run #{run_count} at {datetime.datetime.now(datetime.timezone.utc).isoformat()}"
@@ -159,12 +167,12 @@ def main():
             raw = response.choices[0].message.content
             d = json.loads(raw)
         except json.JSONDecodeError as e:
-            print(f"模型生成的JSON解析错误 (尝试 {retry_count}/{max_retries}): {e}")
-            print(f"生成文本: {raw}")
+            print(f"AI response JSON decode error (attempt {retry_count}/{max_retries}): {e}")
+            print(f"Raw output: {raw}")
             time.sleep(2)
             continue
         except Exception as e:
-            print(f"调用模型时发生错误 (尝试 {retry_count}/{max_retries}): {e}")
+            print(f"API call error (attempt {retry_count}/{max_retries}): {e}")
             time.sleep(5)
             continue
         
@@ -179,7 +187,7 @@ def main():
                     changes_made = True
                 continue
             if change['filename'] == 'LICENSE':
-                print("拒绝修改LICENSE文件。")
+                print("Refusing to modify LICENSE file.")
                 continue
 
             filename = change['filename']
@@ -216,9 +224,9 @@ def main():
                     with open(filename, 'w', encoding='utf-8') as f:
                         f.write(new_content)
                     changes_made = True
-                    print(f"成功修改 {filename}")
+                    print(f"Successfully modified {filename}")
                 else:
-                    print(f"代码验证失败，跳过修改 {filename}")
+                    print(f"Code validation failed, skipping {filename}")
                 try:
                     os.remove(tmp_filename)
                 except OSError:
@@ -231,17 +239,17 @@ def main():
                     os.makedirs(dir_part, exist_ok=True)
                 with open(filename, 'w', encoding='utf-8') as f:
                     f.write(new_content)
-                print(f"修改/创建文件: {filename}")
+                print(f"Modified/created file: {filename}")
                 changes_made = True
         
-        # 成功解析JSON后退出重试循环
+        # Exit retry loop after successful JSON parse
         break
     
     if changes_made:
         print("本轮有更改。")
-    else:
+        print("Changes made this round.")
         print("本轮无更改。")
-
+        print("No changes this round.")
 if __name__ == "__main__":
     max_attempts = 5
     attempts = 0
@@ -252,8 +260,9 @@ if __name__ == "__main__":
             main()
         except Exception as e:
             print(f"执行过程中发生错误 (尝试 {attempts}/{max_attempts}): {e}")
-            time.sleep(10)
+            print(f"Error during execution (attempt {attempts}/{max_attempts}): {e}")
         else:
             ok = True
     if not ok:
         print(f"执行失败，已达最大尝试次数 {max_attempts}")
+        print(f"Execution failed after {max_attempts} attempts")
