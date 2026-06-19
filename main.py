@@ -245,12 +245,13 @@ def main():
         # Exit retry loop after successful JSON parse
         break
     
+
     if changes_made:
         print("本轮有更改。")
         print("Changes made this round.")
+    else:
         print("本轮无更改。")
         print("No changes this round.")
-if __name__ == "__main__":
     max_attempts = 5
     attempts = 0
     ok = False
